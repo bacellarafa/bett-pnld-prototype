@@ -1,0 +1,32 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* ── Scrollbars globais ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 #ffffff;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 99px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 99px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #b8b8b8;
+}
+
+*::-webkit-scrollbar-corner {
+  background: #ffffff;
+}
