@@ -1,41 +1,12 @@
 import { useState } from "react";
 import { Sidebar } from "../Sidebar";
+import { CHECKBOXES, COMPONENTES, ANOS } from "../../constants";
+import { ProfileChip, ComponenteSelect, AnoSelect, BnccField } from "../FormShared";
 
 interface Props {
   onGoTo: (n: number) => void;
   onFormData: (data: { comp: string; ano: string; perfil: string }) => void;
 }
-
-const CHECKBOXES = [
-  "Necessita de apoio frente a desafios novos",
-  "Fragilidade para lidar com frustrações",
-  "Necessita de apoio para manter a atenção",
-  "Necessita de organização, rotina e previsibilidade",
-  "Necessita de apoio visual e/ou concretos",
-  "Requer pausas e oportunidades de movimento",
-  "Engaja-se melhor em atividades curtas",
-  "Necessita de apoio em situações de espera",
-  "Necessita de apoio em atividades em grupo",
-  "Beneficia-se de ambientes com menos estímulos",
-  "Necessita de rotinas e combinados",
-  "Beneficia-se da antecipação de mudanças",
-  "Engaja-se em conteúdos de seu interesse",
-  "Necessita de tempo ampliado para realizar atividades",
-  "Necessita de apoio para realizar atividades",
-  "Precisa de apoio para fazer atividades",
-  "Precisa de apoio para organizar informações",
-  "Beneficia-se de exemplos práticos",
-  "Compreende melhor conteúdos contextualizados",
-  "Gosta de receber devolutivas",
-  "Necessita de apoio com mudanças de contexto",
-  "Compreende enunciados com vocabulário mais acessível",
-  "Compreende melhor textos curtos",
-  "Necessita de apoio na leitura de enunciados",
-  "Beneficia-se de organização visual clara",
-  "Gosta de oralidade e/ou prática",
-  "Prefere copiar em vez de ler",
-  "Necessita de apoio para organizar a escrita",
-];
 
 function RightSidebar() {
   return (
@@ -164,7 +135,7 @@ export function Screen2Form({ onGoTo, onFormData }: Props) {
           {/* Page header */}
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
             <div style={{
-              width: 58, height: 58, borderRadius: 12, flexShrink: 0,
+              width: 52, height: 52, borderRadius: 12, flexShrink: 0,
               background: "#63dcd0",
               display: "flex", alignItems: "center", justifyContent: "center"
             }}>
@@ -279,20 +250,7 @@ export function Screen2Form({ onGoTo, onFormData }: Props) {
             {profiles.length > 0 && (
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
                 {profiles.map((p, i) => (
-                  <div key={p.id} style={{
-                    display: "flex", alignItems: "center", gap: 7,
-                    background: "#fffcff", border: "1px solid #887e91",
-                    borderRadius: 100, padding: "6px 14px", fontSize: 13, color: "#494150"
-                  }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-                    </svg>
-                    Perfil {p.id}
-                    <span
-                      onClick={() => removePerfil(i)}
-                      style={{ cursor: "pointer", fontSize: 14, color: "#494150", marginLeft: 2, lineHeight: 1, opacity: 0.7 }}
-                    >×</span>
-                  </div>
+                  <ProfileChip key={p.id} id={p.id} onRemove={() => removePerfil(i)} />
                 ))}
               </div>
             )}
@@ -401,75 +359,13 @@ export function Screen2Form({ onGoTo, onFormData }: Props) {
 
             {/* Componente + Ano */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>
-                  Componente curricular <span style={{ color: "#ff505f" }}>*</span>
-                </div>
-                <select
-                  value={comp}
-                  onChange={e => setComp(e.target.value)}
-                  style={{
-                    width: "100%", border: "2px solid #e5e7eb", borderRadius: 10,
-                    padding: "11px 14px", fontSize: 13, color: comp ? "#333" : "#6a7282",
-                    background: "#fff", outline: "none", cursor: "pointer",
-                    fontFamily: "Poppins, sans-serif", boxSizing: "border-box", height: 50
-                  }}
-                >
-                  <option value="">Selecione componente curricular</option>
-                  <option>Matemática</option>
-                  <option>Língua Portuguesa</option>
-                  <option>Ciências</option>
-                  <option>História</option>
-                  <option>Geografia</option>
-                </select>
-              </div>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>
-                  Ano/Série <span style={{ color: "#ff505f" }}>*</span>
-                </div>
-                <select
-                  value={ano}
-                  onChange={e => setAno(e.target.value)}
-                  style={{
-                    width: "100%", border: "2px solid #e5e7eb", borderRadius: 10,
-                    padding: "11px 14px", fontSize: 13, color: ano ? "#333" : "#6a7282",
-                    background: "#fff", outline: "none", cursor: "pointer",
-                    fontFamily: "Poppins, sans-serif", boxSizing: "border-box", height: 50
-                  }}
-                >
-                  <option value="">Selecione ano/série</option>
-                  {["1º Ano","2º Ano","3º Ano","4º Ano","5º Ano","6º Ano","7º Ano","8º Ano","9º Ano"].map(a => (
-                    <option key={a}>{a}</option>
-                  ))}
-                </select>
-              </div>
+              <ComponenteSelect value={comp} onChange={setComp} required />
+              <AnoSelect value={ano} onChange={setAno} required />
             </div>
 
             {/* BNCC */}
             <div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>
-                Habilidade da BNCC <span style={{ color: "#8c8c8c", fontWeight: 400, fontSize: 12 }}>(opcional)</span>
-              </div>
-              <div style={{ position: "relative" }}>
-                <span style={{
-                  position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
-                  display: "flex", alignItems: "center", pointerEvents: "none"
-                }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#bcbcbc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-                  </svg>
-                </span>
-                <input
-                  placeholder="Busca com sugestões: ex: EF03MA01"
-                  style={{
-                    width: "100%", border: "2px solid #e5e7eb", borderRadius: 10,
-                    padding: "11px 14px 11px 32px", fontSize: 13,
-                    color: "rgba(102,102,102,0.8)", outline: "none",
-                    fontFamily: "Poppins, sans-serif", boxSizing: "border-box", height: 50
-                  }}
-                />
-              </div>
-              <div style={{ fontSize: 12, color: "#aaa", marginTop: 4 }}>Nenhuma habilidade selecionada</div>
+              <BnccField />
             </div>
           </div>
 

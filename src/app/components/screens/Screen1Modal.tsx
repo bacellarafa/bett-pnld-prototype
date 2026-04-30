@@ -83,8 +83,8 @@ export function Screen1Modal({ onGoTo }: Props) {
         <div style={{ padding: "32px 32px 40px 36px", overflowY: "auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
             <div style={{
-              width: 46, height: 46, borderRadius: 12, flexShrink: 0,
-              background: "linear-gradient(135deg,#3ecdc1,#00beac)",
+              width: 52, height: 52, borderRadius: 12, flexShrink: 0,
+              background: "#63dcd0",
               display: "flex", alignItems: "center", justifyContent: "center"
             }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

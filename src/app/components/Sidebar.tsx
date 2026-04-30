@@ -37,12 +37,12 @@ const FolderIcon = ({ stroke = "#666" }: { stroke?: string }) => (
 );
 
 const navItems = [
-  { label: "Início", icon: HomeIcon, screen: 0 },
-  { label: "Criar Atividade", icon: FileIcon },
-  { label: "Atividade Inclusiva", icon: HeartIcon, badge: "Novo", screen: 1 },
-  { label: "Planejar Aulas", icon: CalendarIcon },
-  { label: "Biblioteca", icon: BookIcon },
-  { label: "Meus Materiais", icon: FolderIcon },
+  { label: "Início",              icon: HomeIcon,     screen: 0  },
+  { label: "Criar Atividade",     icon: FileIcon,     screen: 7  },
+  { label: "Atividade Inclusiva", icon: HeartIcon,    badge: "Novo", screen: 1 },
+  { label: "Planejar Aulas",      icon: CalendarIcon, screen: 5  },
+  { label: "Biblioteca",          icon: BookIcon,     screen: 9  },
+  { label: "Meus Materiais",      icon: FolderIcon,   screen: 10 },
 ];
 
 export function Sidebar({ activeNav, onGoTo }: SidebarProps) {

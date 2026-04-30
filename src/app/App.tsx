@@ -1,24 +1,46 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "./components/Sidebar";
-import { Screen0Home } from "./components/screens/Screen0Home";
-import { Screen1Modal } from "./components/screens/Screen1Modal";
-import { Screen2Form } from "./components/screens/Screen2Form";
-import { Screen3Loading } from "./components/screens/Screen3Loading";
-import { Screen4Result } from "./components/screens/Screen4Result";
+import { Screen0Home }      from "./components/screens/Screen0Home";
+import { Screen1Modal }     from "./components/screens/Screen1Modal";
+import { Screen2Form }      from "./components/screens/Screen2Form";
+import { Screen3Loading }   from "./components/screens/Screen3Loading";
+import { Screen4Result }    from "./components/screens/Screen4Result";
+import { Screen5PlanForm }  from "./components/screens/Screen5PlanForm";
+import { Screen6PlanResult } from "./components/screens/Screen6PlanResult";
+import { Screen7ActivityForm } from "./components/screens/Screen7ActivityForm";
+import { Screen8ActivityResult } from "./components/screens/Screen8ActivityResult";
+import { Screen9Biblioteca }     from "./components/screens/Screen9Biblioteca";
+import { Screen10MeusMateriais } from "./components/screens/Screen10MeusMateriais";
 
-const TOTAL_SCREENS = 5;
+const TOTAL_SCREENS = 11;
 
-// Which nav item is "active" in the sidebar per screen
-const SIDEBAR_NAV = [0, 2, 2, 2, 2];
+// 0=Início, 1=CriarAtividade, 2=AtividadeInclusiva, 3=PlanejarAulas, 4=Biblioteca, 5=MeusMateriais
+const SIDEBAR_NAV = [0, 2, 2, 2, 2, 3, 3, 1, 1, 4, 5];
 
 export default function App() {
   const [current, setCurrent] = useState(0);
+
+  // Data for activity result (Screen4)
   const [formData, setFormData] = useState({
     comp: "Matemática",
     ano: "5º Ano",
     perfil: "Necessita de apoio frente a desafios novos",
   });
 
+  // Data for plan result (Screen6)
+  const [planData, setPlanData] = useState({
+    comp: "Matemática",
+    ano: "3º Ano",
+    tema: "O ciclo da água e sua importância",
+  });
+
+  // Data for activity result (Screen8)
+  const [activityData, setActivityData] = useState({
+    comp: "Matemática",
+    ano: "5º Ano",
+  });
+
+  // ── Scale logic ────────────────────────────────────────────────────────────
   const getInitialScale = () => {
     const w = window.innerWidth;
     return w > 0 ? w / 1440 : 1;
@@ -41,7 +63,7 @@ export default function App() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Keyboard navigation
+  // ── Keyboard navigation ───────────────────────────────────────────────────
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" || e.key === "ArrowDown") goTo(current + 1);
@@ -51,23 +73,39 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [current]);
 
+  // ── Navigation ────────────────────────────────────────────────────────────
+  /** Default goTo: loading (screen 3) always leads to activity result (screen 4). */
   const goTo = (n: number) => {
     if (n < 0 || n >= TOTAL_SCREENS) return;
     setCurrent(n);
     if (n === 3) setTimeout(() => setCurrent(4), 2500);
   };
 
+  /** Called by Screen5PlanForm; uses a separate timeout to navigate to plan result. */
+  const generatePlan = (data: { comp: string; ano: string; tema: string }) => {
+    setPlanData(data);
+    setCurrent(3);
+    setTimeout(() => setCurrent(6), 2500);
+  };
+
   const handleFormData = (data: { comp: string; ano: string; perfil: string }) => {
     setFormData(data);
   };
 
-  // Canvas fills viewport width; height follows 1440:900 ratio
+  /** Called by Screen7ActivityForm; uses a separate timeout to navigate to activity result. */
+  const generateActivity = (data: { comp: string; ano: string }) => {
+    setActivityData(data);
+    setCurrent(3);
+    setTimeout(() => setCurrent(8), 2500);
+  };
+
+  // ── Dimensions ───────────────────────────────────────────────────────────
   const sidebarW = Math.round(291 * scale);
   const canvasH  = Math.round(900 * scale);
 
   return (
     <>
-      {/* Fixed blue background — always covers the whole viewport */}
+      {/* Fixed blue background */}
       <div style={{
         position: "fixed", inset: 0,
         background: "linear-gradient(160deg, #07184a 0%, #0a2568 40%, #0d2e7a 70%, #091d58 100%)",
@@ -75,12 +113,8 @@ export default function App() {
       }} />
 
       {/*
-        ── FIXED SIDEBAR ──────────────────────────────────────────────────────
-        Rendered OUTSIDE the transform canvas so it never scrolls with the page.
-        The inner div is scaled identically to the canvas (transformOrigin: top left)
-        and sized to fill the full viewport height in local (pre-scale) units.
-        The sidebar component itself uses position:absolute + height:100%, so it
-        fills whatever height the wrapper provides.
+        FIXED SIDEBAR — rendered outside the transform canvas so it never
+        scrolls with the page. Scaled to match the canvas transform exactly.
       */}
       <div style={{
         position: "fixed", top: 0, left: 0, zIndex: 100,
@@ -98,16 +132,10 @@ export default function App() {
       </div>
 
       {/*
-        ── SCROLLABLE CANVAS WRAPPER ───────────────────────────────────────────
-        height = canvasH tells the browser how tall the document is, enabling
-        natural body scroll when the scaled canvas taller than the viewport.
+        SCROLLABLE CANVAS — height = canvasH so the body knows the document
+        size, enabling natural vertical scroll when content exceeds viewport.
       */}
       <div style={{ width: "100%", height: canvasH, position: "relative" }}>
-        {/*
-          The 1440×900 canvas scaled to fill the full viewport width.
-          The in-canvas sidebars rendered by screen components are visually
-          covered by the fixed sidebar above (same background, higher z-index).
-        */}
         <div style={{
           width: 1440, height: 900,
           transformOrigin: "top left",
@@ -132,6 +160,24 @@ export default function App() {
             </ScreenWrapper>
             <ScreenWrapper active={current === 4}>
               <Screen4Result onGoTo={goTo} formData={formData} />
+            </ScreenWrapper>
+            <ScreenWrapper active={current === 5}>
+              <Screen5PlanForm onGoTo={goTo} onGeneratePlan={generatePlan} />
+            </ScreenWrapper>
+            <ScreenWrapper active={current === 6}>
+              <Screen6PlanResult onGoTo={goTo} planData={planData} />
+            </ScreenWrapper>
+            <ScreenWrapper active={current === 7}>
+              <Screen7ActivityForm onGoTo={goTo} onGenerateActivity={generateActivity} />
+            </ScreenWrapper>
+            <ScreenWrapper active={current === 8}>
+              <Screen8ActivityResult onGoTo={goTo} activityData={activityData} />
+            </ScreenWrapper>
+            <ScreenWrapper active={current === 9}>
+              <Screen9Biblioteca onGoTo={goTo} />
+            </ScreenWrapper>
+            <ScreenWrapper active={current === 10}>
+              <Screen10MeusMateriais onGoTo={goTo} />
             </ScreenWrapper>
           </div>
         </div>
