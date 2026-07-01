@@ -17,6 +17,9 @@ function figmaAssetResolver() {
 }
 
 export default defineConfig({
+  // GitHub Pages serve em https://<user>.github.io/bett-pnld-prototype/
+  // O base precisa bater com o nome do repositório, senão os assets dão 404 (tela branca).
+  base: '/bett-pnld-prototype/',
   plugins: [
     figmaAssetResolver(),
     // The React and Tailwind plugins are both required for Make, even if
