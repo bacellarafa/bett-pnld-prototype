@@ -8,15 +8,14 @@ interface Props {
   activityData: { comp: string; ano: string };
 }
 
-const ACCENT = "#46b2ff";
 const CONTENT_TYPE = "atividade" as const;
 
 const QUESTIONS = [
-  "1. Cite três exemplos de grandezas que estudamos em Matemática e que usamos no dia a dia.",
-  "2. Qual é a unidade padrão de medida de comprimento no Sistema Métrico Decimal? Além dela, cite duas unidades de medida de comprimento.",
-  "3. Se você precisa medir a massa de um pacote de arroz e a massa de um caminhão, quais unidades de massa seriam mais adequadas para cada situação?",
-  "4. Para medir a quantidade de água em uma garrafa e a quantidade de remédio em uma seringa, quais unidades de medida de capacidade você usaria?",
-  "5. Mencione dois instrumentos que podemos usar para medir o comprimento de objetos ou distâncias.",
+  "Cite três exemplos de grandezas que estudamos em Matemática e que usamos no dia a dia.",
+  "Qual é a unidade padrão de medida de comprimento no Sistema Métrico Decimal? Além dela, cite duas unidades de medida de comprimento.",
+  "Se você precisa medir a massa de um pacote de arroz e a massa de um caminhão, quais unidades de massa seriam mais adequadas para cada situação?",
+  "Para medir a quantidade de água em uma garrafa e a quantidade de remédio em uma seringa, quais unidades de medida de capacidade você usaria?",
+  "Mencione dois instrumentos que podemos usar para medir o comprimento de objetos ou distâncias.",
 ];
 
 const ANSWERS = [
@@ -31,228 +30,141 @@ export function Screen8ActivityResult({ onGoTo, activityData }: Props) {
   const { comp, ano } = activityData;
   const [showAnswers, setShowAnswers] = useState(false);
   const [alertOpen, setAlertOpen] = useState(true);
+  const [successOpen, setSuccessOpen] = useState(true);
   const [exportOpen, setExportOpen] = useState(false);
   const [exportEntry, setExportEntry] = useState<"action_bar" | "edit_alert">("action_bar");
   const [exportFormat, setExportFormat] = useState<"pdf" | "docx">("pdf");
 
   const openExport = (entry: "action_bar" | "edit_alert", format: "pdf" | "docx" = "pdf") => {
-    setExportEntry(entry);
-    setExportFormat(format);
-    setExportOpen(true);
+    setExportEntry(entry); setExportFormat(format); setExportOpen(true);
   };
 
   return (
     <div style={{ display: "flex", width: 1440, height: 900, background: "#fff", overflow: "hidden" }}>
       <Sidebar activeNav={1} onGoTo={onGoTo} />
+      <div style={{ position: "absolute", left: 291, right: 0, top: 0, bottom: 0, overflowY: "auto", background: "#fff" }}>
+        <div style={{ position: "relative", padding: "40px 40px 60px", width: 1108, boxSizing: "border-box" }}>
 
-      <div style={{
-        position: "absolute", left: 291, right: 0, top: 0, bottom: 0,
-        overflowY: "auto", background: "#fff",
-      }}>
-        <div style={{ padding: "32px 40px 40px 40px", minHeight: 900 }}>
-
-          {/* ── Success banner ── */}
-          <div style={{
-            background: "#f0fdf4", borderLeft: "5px solid #22c55e",
-            borderRadius: 12, padding: "16px 22px", marginBottom: 12,
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 17, fontWeight: 600, color: "#000" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" />
-              </svg>
-              Atividade gerada com sucesso!
-            </div>
-            <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
-              Você ainda pode gerar <strong style={{ color: "#000" }}>3</strong> atividades hoje!
-            </div>
-          </div>
-
-          {/* ── Tags ── */}
-          <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 22, flexWrap: "wrap" }}>
-            <span style={{ padding: "4px 12px", borderRadius: 7, fontSize: 12, color: "#fff", fontWeight: 400, background: "#f59e0b" }}>
-              {comp} – {ano}
-            </span>
-            <span style={{ fontSize: 12, color: "#888" }}>5 questões</span>
-          </div>
-
-          {/* ── Header card ── */}
-          <div style={{
-            background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12,
-            padding: "28px 32px", textAlign: "center", marginBottom: 16,
-            boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
-          }}>
-            <div style={{ fontSize: 22, fontWeight: 600, color: "#0a0a0a", marginBottom: 6 }}>
-              Atividade de {comp}
-            </div>
-            <div style={{ fontSize: 13, color: "#888", marginBottom: 6 }}>{ano} do Ensino Fundamental</div>
-            <div style={{ fontSize: 12, color: "#888", marginBottom: 20, lineHeight: 1.5 }}>
-              <strong>Habilidade:</strong> EF05MA01 – Identificar e descrever regularidades em sequências numéricas recursivas
-            </div>
-            <div style={{ display: "flex", justifyContent: "center", gap: 100 }}>
-              <div>
-                <div style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>Série de Questões</div>
-                <div style={{ fontSize: 17, fontWeight: 600, color: "#000" }}>5</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>Questões</div>
-                <div style={{ fontSize: 17, fontWeight: 600, color: "#000" }}>Questões Isoladas</div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Actions ── */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <div style={{ display: "flex", gap: 12 }}>
-              {/* Exportar ▾ — botão branco com chevron (fiel ao Figma) */}
-              <button
-                onClick={() => openExport("action_bar")}
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  borderRadius: 10, padding: "9px 16px", fontSize: 14,
-                  cursor: "pointer", background: "#fff", border: "1px solid #cbd5e1",
-                  color: "#334155", fontFamily: "Poppins, sans-serif",
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
-                </svg>
-                Exportar
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-              </button>
-
-              {/* Imprimir */}
-              <button
-                onClick={() => window.print()}
-                style={{
-                  display: "flex", alignItems: "center", gap: 7,
-                  borderRadius: 12, padding: "9px 16px", fontSize: 13,
-                  cursor: "pointer", background: "#fff", border: "1px solid #999",
-                  color: "#555", fontFamily: "Poppins, sans-serif",
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="6 9 6 2 18 2 18 9" />
-                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                  <rect width="12" height="8" x="6" y="14" />
-                </svg>
-                Imprimir
-              </button>
-
-              {/* Exibir respostas — alterna gabarito */}
-              <button
-                onClick={() => setShowAnswers((v) => !v)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 7,
-                  borderRadius: 12, padding: "9px 16px", fontSize: 13,
-                  cursor: "pointer",
-                  background: showAnswers ? "#eef2ff" : "#fff",
-                  border: `1px solid ${showAnswers ? "#6366f1" : "#999"}`,
-                  color: showAnswers ? "#4338ca" : "#555", fontFamily: "Poppins, sans-serif",
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={showAnswers ? "#4338ca" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" />
-                </svg>
-                {showAnswers ? "Ocultar respostas" : "Exibir respostas"}
-              </button>
-            </div>
-
-            {/* Feedback + Gerar Nova */}
-            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-              <FeedbackControl contentType={CONTENT_TYPE} />
-              <button
-                onClick={() => onGoTo(7)}
-                style={{
-                  background: "#0032be", color: "#fff", border: "none", borderRadius: 12,
-                  padding: "10px 20px", fontSize: 13, cursor: "pointer",
-                  display: "flex", alignItems: "center", gap: 7, fontWeight: 600,
-                  fontFamily: "Poppins, sans-serif",
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
-                  fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                  <path d="M21 3v5h-5" />
-                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                  <path d="M8 16H3v5" />
-                </svg>
-                Gerar Nova Atividade
-              </button>
-            </div>
-          </div>
-
-          {/* ── Alerta de edição (texto + link "Exportar em .DOCX" + X) — fiel ao Figma ── */}
-          {alertOpen && (
+          {successOpen && (
             <div style={{
-              display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12,
-              background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10,
-              padding: "12px 16px", marginBottom: 20,
+              position: "absolute", top: 24, right: 40, width: 500, zIndex: 5,
+              display: "flex", gap: 12, alignItems: "center",
+              background: "#f0fdf4", border: "1px solid #00c950", borderRadius: 12, padding: 16,
+              boxShadow: "0 4px 6px rgba(13,7,18,0.16)",
             }}>
-              <div style={{ display: "flex", gap: 10 }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
-                  <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
-                </svg>
-                <div>
-                  <div style={{ fontSize: 13, color: "#1e40af" }}>
-                    As questões não podem ser editadas aqui. Para fazer alterações, exporte a atividade em Word (.docx).
-                  </div>
-                  <button
-                    onClick={() => openExport("edit_alert", "docx")}
-                    style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: "#2563eb", fontSize: 13, textDecoration: "underline", cursor: "pointer", fontFamily: "Poppins, sans-serif" }}
-                  >
-                    Exportar em .DOCX
-                  </button>
-                </div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00a63e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172b" }}>Atividade gerada com sucesso!</div>
+                <div style={{ fontSize: 12, color: "#666", marginTop: 1 }}>Você ainda pode gerar <strong style={{ color: "#000" }}>3</strong> atividades hoje!</div>
               </div>
-              <button onClick={() => setAlertOpen(false)} aria-label="Fechar" style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", lineHeight: 0, padding: 2, flexShrink: 0 }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              <button onClick={() => setSuccessOpen(false)} aria-label="Fechar" style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", lineHeight: 0, padding: 0 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
               </button>
             </div>
           )}
 
-          {/* ── Questions ── */}
-          <div style={{
-            background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12,
-            overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-          }}>
-            {QUESTIONS.map((q, i) => (
-              <div key={i} style={{
-                border: "1px solid #f2f2f3", borderRadius: 7, padding: "16px 20px", margin: 16,
-              }}>
-                <div style={{ fontSize: 14, color: "#101828", marginBottom: 10, lineHeight: 1.55 }}>{q}</div>
-                {showAnswers ? (
-                  <div style={{
-                    background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 6,
-                    padding: "12px 14px", fontSize: 13, color: "#166534",
-                  }}>
-                    <strong>Gabarito:</strong> {ANSWERS[i]}
-                  </div>
-                ) : (
-                  <div style={{
-                    background: "#fff", border: "1px solid #f2f2f3", borderRadius: 6,
-                    padding: "12px 14px", minHeight: 72, fontSize: 13, color: "#bbb",
-                  }}>
-                    [Espaço para resposta]
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 41, width: 1028 }}>
 
+            {/* Header card */}
+            <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span style={{ fontSize: 24, fontWeight: 600, color: "#000" }}>Atividade de {comp}</span>
+                <span style={{ width: 36, height: 36, borderRadius: 14, border: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", background: "#fff" }} title="Renomear">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                </span>
+              </div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                <Chip bg="#f5f5f5" color="#666">{comp}</Chip>
+                <Chip bg="#f5f5f5" color="#666">{ano} - Ensino Fundamental</Chip>
+                <Chip bg="#666" color="#f5f5f5">EF05MA01</Chip>
+                <span style={{ fontSize: 12, color: "#666" }}>5 questões</span>
+                <span style={{ fontSize: 12, color: "#666" }}>•</span>
+                <span style={{ fontSize: 12, color: "#666" }}>Questões avulsas</span>
+              </div>
+            </div>
+
+            {/* Barra de ações */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 48 }}>
+              <div style={{ display: "flex", gap: 18, alignItems: "center", height: "100%" }}>
+                <button onClick={() => openExport("action_bar")} style={actionBtn}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+                  <span style={{ fontSize: 16, color: "#666" }}>Exportar</span>
+                  <span style={{ width: 1, height: 28, background: "#d9d9d9" }} />
+                  <svg width="10" height="7" viewBox="0 0 10 7" fill="none"><path d="M1 2L5 6L9 2" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+                <button onClick={() => window.print()} style={actionBtn}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect width="12" height="8" x="6" y="14" /></svg>
+                  <span style={{ fontSize: 16, color: "#666" }}>Imprimir</span>
+                </button>
+                <button onClick={() => setShowAnswers(v => !v)} style={{ ...actionBtn, borderColor: showAnswers ? "#0032be" : "#666" }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={showAnswers ? "#0032be" : "#666"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                  <span style={{ fontSize: 16, color: showAnswers ? "#0032be" : "#666" }}>{showAnswers ? "Ocultar respostas" : "Exibir respostas"}</span>
+                </button>
+              </div>
+              <div style={{ display: "flex", gap: 18, alignItems: "center", height: "100%" }}>
+                <FeedbackControl contentType={CONTENT_TYPE} />
+                <button onClick={() => onGoTo(7)} style={{ height: 48, background: "#0032be", border: "1px solid #0032be", borderRadius: 14, padding: "0 20px", display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontFamily: "Poppins, sans-serif" }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg>
+                  <span style={{ fontSize: 16, color: "#fff" }}>Gerar Nova Atividade</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Alerta de edição */}
+            {alertOpen && (
+              <div style={{ display: "flex", alignItems: "stretch", background: "#f2faff", border: "1px solid #96b0f4", borderRadius: 8, overflow: "hidden", gap: 16, paddingRight: 16 }}>
+                <div style={{ width: 4, background: "#0041e6", flexShrink: 0 }} />
+                <div style={{ display: "flex", gap: 16, alignItems: "flex-start", padding: "12px 0", flex: 1 }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0041e6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <span style={{ fontSize: 14, color: "#494150", lineHeight: 1.52 }}>As questões não podem ser editadas aqui. Para fazer alterações, exporte a atividade em Word (.docx)</span>
+                    <button onClick={() => openExport("edit_alert", "docx")} style={{ alignSelf: "flex-start", background: "none", border: "none", padding: 0, color: "#0041e6", fontSize: 14, textDecoration: "underline", cursor: "pointer", fontFamily: "Poppins, sans-serif" }}>Exportar em .DOCX</button>
+                  </div>
+                </div>
+                <button onClick={() => setAlertOpen(false)} aria-label="Fechar" style={{ background: "none", border: "none", cursor: "pointer", color: "#494150", lineHeight: 0, padding: 0, alignSelf: "center", flexShrink: 0 }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                </button>
+              </div>
+            )}
+
+            {/* Questões */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {QUESTIONS.map((q, i) => (
+                <div key={i} style={{ border: "1px solid #f2f2f3", borderRadius: 6, padding: 16 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <p style={{ margin: 0, fontSize: 16, color: "#101828", lineHeight: "24px" }}>{i + 1}. {q}</p>
+                    {showAnswers ? (
+                      <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 14, padding: 16, fontSize: 14, color: "#166534" }}>
+                        <strong>Gabarito:</strong> {ANSWERS[i]}
+                      </div>
+                    ) : (
+                      <div style={{ background: "#f5f5f5", border: "1px dashed rgba(102,102,102,0.4)", borderRadius: 14, height: 60, padding: 16, boxSizing: "border-box" }}>
+                        <span style={{ fontSize: 13, color: "rgba(102,102,102,0.4)" }}>[Espaço para resposta]</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── Modal de exportação ── */}
-      <ExportModal
-        open={exportOpen}
-        onClose={() => setExportOpen(false)}
-        contentType={CONTENT_TYPE}
-        variant="atividade"
-        entryPoint={exportEntry}
-        initialFormat={exportFormat}
-        materialLabel={`Atividade de ${comp}`}
-      />
+      <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} contentType={CONTENT_TYPE} variant="atividade" entryPoint={exportEntry} initialFormat={exportFormat} materialLabel={`Atividade de ${comp}`} />
     </div>
+  );
+}
+
+const actionBtn: React.CSSProperties = {
+  height: 48, background: "#fff", border: "1px solid #666", borderRadius: 14,
+  padding: "0 17px", display: "flex", alignItems: "center", gap: 12, cursor: "pointer",
+  fontFamily: "Poppins, sans-serif",
+};
+
+function Chip({ children, bg, color, weight = 500 }: { children: React.ReactNode; bg: string; color: string; weight?: number }) {
+  return (
+    <span style={{ background: bg, color, padding: "4px 10px", borderRadius: 6, fontSize: 12, fontWeight: weight, whiteSpace: "nowrap" }}>
+      {children}
+    </span>
   );
 }
