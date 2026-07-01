@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "./components/Sidebar";
+import { ToastHost } from "./lib/toast";
 import { Screen0Home }      from "./components/screens/Screen0Home";
 import { Screen1Modal }     from "./components/screens/Screen1Modal";
 import { Screen2Form }      from "./components/screens/Screen2Form";
@@ -195,6 +196,9 @@ export default function App() {
         button, input, select, textarea { font-family: inherit; }
         @keyframes fadein { from { opacity: 0.6; } to { opacity: 1; } }
       `}</style>
+
+      {/* Toasts de confirmação — fora do canvas escalado (tamanho real, canto sup. direito) */}
+      <ToastHost />
     </>
   );
 }
