@@ -229,22 +229,22 @@ export function Screen6PlanResult({ onGoTo, planData }: Props) {
           {/* ── Action bar ── */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              {/* Exportar ▾ */}
+              {/* Exportar ▾ — botão branco com chevron (fiel ao Figma) */}
               <button
                 onClick={() => setExportOpen(true)}
                 style={{
-                  background: "#46b2ff", borderRadius: 10, height: 38, padding: "0 16px",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-                  cursor: "pointer", border: "none", fontFamily: "Poppins, sans-serif",
+                  background: "#fff", borderRadius: 10, height: 38, padding: "0 16px",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  cursor: "pointer", border: "1px solid #cbd5e1", fontFamily: "Poppins, sans-serif",
                 }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <path d="M2 10v2a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-2" stroke="white" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M4.667 6.667 8 10l3.333-3.333" stroke="white" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M8 10V2" stroke="white" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 10v2a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-2" stroke="#64748b" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M4.667 6.667 8 10l3.333-3.333" stroke="#64748b" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M8 10V2" stroke="#64748b" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span style={{ fontSize: 13, color: "#fff", fontWeight: 500 }}>Exportar</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                <span style={{ fontSize: 13, color: "#334155" }}>Exportar</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
               </button>
 
               {/* Imprimir */}

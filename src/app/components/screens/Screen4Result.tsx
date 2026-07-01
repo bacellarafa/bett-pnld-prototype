@@ -29,6 +29,7 @@ const ANSWERS = [
 export function Screen4Result({ onGoTo, formData }: Props) {
   const { comp, ano, perfil } = formData;
   const [showAnswers, setShowAnswers] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(true);
   const [exportOpen, setExportOpen] = useState(false);
   const [exportEntry, setExportEntry] = useState<"action_bar" | "edit_alert">("action_bar");
   const [exportFormat, setExportFormat] = useState<"pdf" | "docx">("pdf");
@@ -59,36 +60,6 @@ export function Screen4Result({ onGoTo, formData }: Props) {
             <div style={{ fontSize: 12, color: "#888", marginTop: 4 }}>
               Você ainda pode gerar <strong style={{ color: "#000" }}>3</strong> atividades hoje!
             </div>
-          </div>
-
-          {/* Alerta de edição (barra azul inline) — edit_alert_cta_clicked */}
-          <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
-            background: "#eff6ff", border: "1px solid #bfdbfe", borderLeft: "4px solid #3b82f6",
-            borderRadius: 10, padding: "11px 16px", marginBottom: 16,
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
-              </svg>
-              <span style={{ fontSize: 13, color: "#1e40af" }}>
-                Quer editar as questões? Exporte em <strong>.DOCX</strong> e ajuste no seu editor de texto.
-              </span>
-            </div>
-            <button
-              onClick={() => openExport("edit_alert", "docx")}
-              style={{
-                flexShrink: 0, display: "flex", alignItems: "center", gap: 7,
-                background: "#2563eb", color: "#fff", border: "none", borderRadius: 9,
-                padding: "8px 14px", fontSize: 12.5, fontWeight: 500, cursor: "pointer",
-                fontFamily: "Poppins, sans-serif",
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
-              </svg>
-              Exportar em .DOCX
-            </button>
           </div>
 
           {/* Tags */}
@@ -130,19 +101,19 @@ export function Screen4Result({ onGoTo, formData }: Props) {
           {/* Actions */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <div style={{ display: "flex", gap: 12 }}>
-              {/* Exportar ▾ */}
+              {/* Exportar ▾ — botão branco com chevron (fiel ao Figma) */}
               <button
                 onClick={() => openExport("action_bar")}
                 style={{
-                  display: "flex", alignItems: "center", gap: 7,
-                  borderRadius: 12, padding: "9px 16px", fontSize: 14,
-                  cursor: "pointer", background: "#46b2ff", border: "1px solid #46b2ff",
-                  color: "#fff", fontFamily: "Poppins, sans-serif", fontWeight: 500,
+                  display: "flex", alignItems: "center", gap: 8,
+                  borderRadius: 10, padding: "9px 16px", fontSize: 14,
+                  cursor: "pointer", background: "#fff", border: "1px solid #cbd5e1",
+                  color: "#334155", fontFamily: "Poppins, sans-serif",
                 }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
                 Exportar
-                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
               </button>
 
               {/* Imprimir */}
@@ -196,6 +167,35 @@ export function Screen4Result({ onGoTo, formData }: Props) {
               </button>
             </div>
           </div>
+
+          {/* Alerta de edição (texto + link "Exportar em .DOCX" + X) — fiel ao Figma */}
+          {alertOpen && (
+            <div style={{
+              display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12,
+              background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10,
+              padding: "12px 16px", marginBottom: 20,
+            }}>
+              <div style={{ display: "flex", gap: 10 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 1 }}>
+                  <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+                </svg>
+                <div>
+                  <div style={{ fontSize: 13, color: "#1e40af" }}>
+                    As questões não podem ser editadas aqui. Para fazer alterações, exporte a atividade em Word (.docx).
+                  </div>
+                  <button
+                    onClick={() => openExport("edit_alert", "docx")}
+                    style={{ background: "none", border: "none", padding: 0, marginTop: 4, color: "#2563eb", fontSize: 13, textDecoration: "underline", cursor: "pointer", fontFamily: "Poppins, sans-serif" }}
+                  >
+                    Exportar em .DOCX
+                  </button>
+                </div>
+              </div>
+              <button onClick={() => setAlertOpen(false)} aria-label="Fechar" style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", lineHeight: 0, padding: 2, flexShrink: 0 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+              </button>
+            </div>
+          )}
 
           {/* Summary */}
           <div style={{
