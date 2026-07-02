@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { type ContentType } from "../lib/track";
 import { showToast } from "../lib/toast";
 
@@ -93,11 +94,11 @@ function FeedbackModal({ rating, onClose, onSubmit }: { rating: Rating; onClose:
   const [selected, setSelected] = useState<string[]>([]);
   const [comment, setComment] = useState("");
   const toggle = (r: string) => setSelected((s) => (s.includes(r) ? s.filter((x) => x !== r) : [...s, r]));
-  const canSend = selected.length > 0 || comment.trim().length > 0;
+  const canSend = positive ? true : (selected.length > 0 || comment.trim().length > 0);
 
-  return (
+  return createPortal(
     <div onMouseDown={(e) => e.target === e.currentTarget && onClose()}
-      style={{ position: "absolute", inset: 0, background: "rgba(15,23,42,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 900, animation: "ftd-fade 0.18s ease" }}>
+      style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 900, animation: "ftd-fade 0.18s ease" }}>
       <div style={{ width: 600, background: "#fff", border: "1px solid #e2e8f0", borderRadius: 24, padding: 32, display: "flex", flexDirection: "column", gap: 24, boxShadow: "0 4px 6px rgba(13,7,18,0.16), 0 24px 60px rgba(13,7,18,0.10)", fontFamily: "Poppins, sans-serif", animation: "ftd-pop 0.2s cubic-bezier(0.16,1,0.3,1)", boxSizing: "border-box" }}>
         {/* Header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
@@ -112,21 +113,23 @@ function FeedbackModal({ rating, onClose, onSubmit }: { rating: Rating; onClose:
           </div>
         </div>
 
-        {/* Chips */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%" }}>
-          <span style={{ fontSize: 14, fontWeight: 600, color: "#64748b" }}>{positive ? "O que se destacou:" : "Selecione os motivos:"}</span>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {reasons.map((r) => {
-              const on = selected.includes(r);
-              return (
-                <button key={r} onClick={() => toggle(r)}
-                  style={{ cursor: "pointer", fontFamily: "Poppins, sans-serif", fontSize: 13, padding: "6px 12px", borderRadius: 20, border: `1px solid ${on ? accent : "#e2e8f0"}`, background: on ? tint : "#fff", color: on ? accent : "#64748b", transition: "all 0.12s" }}>
-                  {r}
-                </button>
-              );
-            })}
+        {/* Chips (apenas no feedback negativo; positivo é só comentário) */}
+        {!positive && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%" }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#64748b" }}>Selecione os motivos:</span>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {reasons.map((r) => {
+                const on = selected.includes(r);
+                return (
+                  <button key={r} onClick={() => toggle(r)}
+                    style={{ cursor: "pointer", fontFamily: "Poppins, sans-serif", fontSize: 13, padding: "6px 12px", borderRadius: 20, border: `1px solid ${on ? accent : "#e2e8f0"}`, background: on ? tint : "#fff", color: on ? accent : "#64748b", transition: "all 0.12s" }}>
+                    {r}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Comentário */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }}>
@@ -148,6 +151,7 @@ function FeedbackModal({ rating, onClose, onSubmit }: { rating: Rating; onClose:
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

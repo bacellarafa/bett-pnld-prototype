@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { type ContentType } from "../lib/track";
 import { showToast } from "../lib/toast";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Modal de Exportação — compartilhado por Atividade, Atividade Inclusiva e Plano.
-// Notas 10/11/14 do handoff.
-//  · Cards PDF (default) / DOCX — seleção exclusiva
-//  · Toggle: "Incluir respostas/gabarito" (Atividade) | "Incluir adaptações" (Plano) — ON por default
-//  · Botão Exportar azul, largura total
-//  · Confirmação: toast verde de sucesso (auto-dismiss ~4s)
+// Modal de Exportação — specs exatas do Figma (nodes 1:4788 / 1:4821).
+//  600px · p32 · gap32 · radius24 · shadow 0 4 6 rgba(13,7,18,.16)
+//  Card selecionado: borda 2px #46b2ff, bg rgba(70,178,255,.03)
+//  Botão "Exportar": #0032be, Regular 16px, radius14, p14, largura total
 // ─────────────────────────────────────────────────────────────────────────────
 
 type Variant = "atividade" | "plano";
@@ -19,33 +18,24 @@ interface Props {
   onClose: () => void;
   contentType: ContentType;
   variant: Variant;
-  /** Origem do clique: barra de ações ou alerta de edição. */
   entryPoint?: "action_bar" | "edit_alert";
-  /** Formato pré-selecionado (o alerta de edição sugere DOCX). */
   initialFormat?: Format;
-  /** Nome legível do material para o toast de sucesso. */
   materialLabel: string;
 }
 
-export function ExportModal({
-  open,
-  onClose,
-  contentType,
-  variant,
-  entryPoint = "action_bar",
-  initialFormat = "pdf",
-  materialLabel,
-}: Props) {
+const BLUE = "#46b2ff";
+const PRIMARY = "#0032be";
+
+export function ExportModal({ open, onClose, variant, initialFormat = "pdf", materialLabel }: Props) {
   const [format, setFormat] = useState<Format>(initialFormat);
   const isAtividade = variant === "atividade";
   const [optionOn, setOptionOn] = useState(true);
 
-  // Reset + evento de abertura sempre que o modal abre
   useEffect(() => {
     if (!open) return;
     setFormat(initialFormat);
     setOptionOn(true);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && handleDismiss();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,136 +43,62 @@ export function ExportModal({
 
   if (!open) return null;
 
-  const handleDismiss = () => {
-    onClose();
-  };
-
-  const toggleOption = () => setOptionOn((v) => !v);
-
-  const pickFormat = (f: Format) => setFormat(f);
-
   const handleExport = () => {
     onClose();
-    showToast(
-      "Exportação realizada com sucesso!",
-      `${materialLabel} em ${format.toUpperCase()} pronto para download.`,
-    );
+    showToast("Exportação realizada com sucesso!", `${materialLabel} em ${format.toUpperCase()} pronto para download.`);
   };
 
   const title = isAtividade ? "Exportar Atividade" : "Exportar Plano de Aula";
-  const toggleLabel = isAtividade ? "Incluir respostas / gabarito" : "Incluir adaptações";
-  const toggleHelp = isAtividade
-    ? "Adiciona uma página de gabarito ao final do arquivo."
-    : "Mantém as adaptações do perfil no arquivo exportado.";
+  const toggleLabel = isAtividade ? "Incluir respostas/gabarito" : "Incluir adaptações";
 
-  return (
+  return createPortal(
     <div
-      onMouseDown={(e) => e.target === e.currentTarget && handleDismiss()}
+      onMouseDown={(e) => e.target === e.currentTarget && onClose()}
       style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(15,23,42,0.45)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 900,
-        animation: "ftd-fade 0.18s ease",
+        position: "fixed", inset: 0, background: "rgba(15,23,42,0.45)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 900, animation: "ftd-fade 0.18s ease",
       }}
     >
       <div
         style={{
-          width: 440,
-          background: "#fff",
-          borderRadius: 16,
-          padding: "22px 24px 24px",
-          boxShadow: "0 24px 60px rgba(0,0,0,0.28)",
-          fontFamily: "Poppins, sans-serif",
-          animation: "ftd-pop 0.2s cubic-bezier(0.16,1,0.3,1)",
+          width: 600, background: "#fff", borderRadius: 24, padding: 32,
+          display: "flex", flexDirection: "column", gap: 32,
+          boxShadow: "0 4px 6px rgba(13,7,18,0.16), 0 24px 60px rgba(13,7,18,0.10)",
+          fontFamily: "Poppins, sans-serif", animation: "ftd-pop 0.2s cubic-bezier(0.16,1,0.3,1)",
+          boxSizing: "border-box",
         }}
       >
         {/* Header */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 4 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 9, background: "#eaf4ff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0032be" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
-              </svg>
-            </div>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 600, color: "#0a0a0a" }}>{title}</div>
-              <div style={{ fontSize: 12, color: "#888" }}>Escolha o formato do arquivo</div>
-            </div>
-          </div>
-          <button onClick={handleDismiss} aria-label="Fechar" style={{ background: "transparent", border: "none", cursor: "pointer", color: "#6b7280", lineHeight: 0, padding: 4 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+          <span style={{ fontSize: 20, fontWeight: 600, color: "#000" }}>{title}</span>
+          <button onClick={onClose} aria-label="Fechar" style={{ background: "transparent", border: "none", cursor: "pointer", color: "#0a0a0a", lineHeight: 0, padding: 0, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18" /><path d="m6 6 12 12" />
             </svg>
           </button>
         </div>
 
         {/* Format cards */}
-        <div style={{ display: "flex", gap: 12, marginTop: 18 }}>
-          <FormatCard
-            active={format === "pdf"}
-            onClick={() => pickFormat("pdf")}
-            label="Formato PDF"
-            desc="Ideal para imprimir"
-            accent="#e11d48"
-          />
-          <FormatCard
-            active={format === "docx"}
-            onClick={() => pickFormat("docx")}
-            label="Formato DOCX"
-            desc="Editável no Word"
-            accent="#2563eb"
-          />
+        <div style={{ display: "flex", gap: 20, width: "100%" }}>
+          <FormatCard active={format === "pdf"} onClick={() => setFormat("pdf")} label="Formato PDF" desc="Ideal para impressão e visualização" kind="pdf" />
+          <FormatCard active={format === "docx"} onClick={() => setFormat("docx")} label="Formato DOCX" desc="Editável no Word e Google Docs" kind="docx" />
         </div>
 
-        {/* Toggle option */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-            marginTop: 18,
-            padding: "12px 14px",
-            background: "#f8fafc",
-            border: "1px solid #eef2f6",
-            borderRadius: 10,
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 500, color: "#0f172b" }}>{toggleLabel}</div>
-            <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>{toggleHelp}</div>
-          </div>
-          <Toggle on={optionOn} onClick={toggleOption} />
+        {/* Toggle */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>{toggleLabel}</span>
+          <Toggle on={optionOn} onClick={() => setOptionOn((v) => !v)} />
         </div>
 
         {/* Export button */}
         <button
           onClick={handleExport}
           style={{
-            marginTop: 20,
-            width: "100%",
-            height: 44,
-            border: "none",
-            borderRadius: 12,
-            background: "#0032be",
-            color: "#fff",
-            fontSize: 14,
-            fontWeight: 600,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            fontFamily: "Poppins, sans-serif",
+            width: "100%", padding: 14, border: "none", borderRadius: 14, background: PRIMARY,
+            color: "#fff", fontSize: 16, fontWeight: 400, cursor: "pointer", fontFamily: "Poppins, sans-serif",
           }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
-          </svg>
           Exportar
         </button>
       </div>
@@ -191,55 +107,49 @@ export function ExportModal({
         @keyframes ftd-fade{from{opacity:0}to{opacity:1}}
         @keyframes ftd-pop{from{opacity:0;transform:translateY(8px) scale(0.98)}to{opacity:1;transform:translateY(0) scale(1)}}
       `}</style>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
-function FormatCard({
-  active, onClick, label, desc, accent,
-}: {
-  active: boolean; onClick: () => void; label: string; desc: string; accent: string;
-}) {
+function FormatCard({ active, onClick, label, desc, kind }: { active: boolean; onClick: () => void; label: string; desc: string; kind: "pdf" | "docx" }) {
+  const iconColor = kind === "pdf" ? "#ef4444" : "#2f6fed";
   return (
     <button
       onClick={onClick}
       style={{
-        flex: 1,
-        textAlign: "left",
-        cursor: "pointer",
-        borderRadius: 12,
-        padding: "14px 14px 12px",
-        background: active ? "#f0f6ff" : "#fff",
-        border: `1.5px solid ${active ? "#0032be" : "#e5e7eb"}`,
-        transition: "all 0.15s",
-        fontFamily: "Poppins, sans-serif",
-        position: "relative",
+        flex: "1 0 0", minWidth: 0, textAlign: "left", cursor: "pointer",
+        display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-start",
+        borderRadius: 16, padding: 20,
+        background: active ? "rgba(70,178,255,0.03)" : "#fff",
+        border: active ? `2px solid ${BLUE}` : "1px solid #e2e8f0",
+        fontFamily: "Poppins, sans-serif", transition: "all 0.15s",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: `${accent}1a`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" />
-          </svg>
-        </div>
-        <RadioDot active={active} />
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", width: "100%" }}>
+        <span style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {kind === "pdf" ? (
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /><path d="m9 15 2 2 4-4" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v5h5" /><path d="M8 13h8" /><path d="M8 17h8" />
+            </svg>
+          )}
+        </span>
+        <Radio active={active} />
       </div>
-      <div style={{ fontSize: 13, fontWeight: 600, color: "#0f172b", marginTop: 10 }}>{label}</div>
-      <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 1 }}>{desc}</div>
+      <span style={{ fontSize: 16, fontWeight: 600, color: "#000" }}>{label}</span>
+      <span style={{ fontSize: 12, color: "#64748b", lineHeight: 1.35 }}>{desc}</span>
     </button>
   );
 }
 
-function RadioDot({ active }: { active: boolean }) {
+function Radio({ active }: { active: boolean }) {
   return (
-    <span
-      style={{
-        width: 18, height: 18, borderRadius: "50%",
-        border: `2px solid ${active ? "#0032be" : "#cbd5e1"}`,
-        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-      }}
-    >
-      {active && <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#0032be" }} />}
+    <span style={{ width: 20, height: 20, borderRadius: "50%", border: `2px solid ${active ? BLUE : "#cbd5e1"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+      {active && <span style={{ width: 10, height: 10, borderRadius: "50%", background: BLUE }} />}
     </span>
   );
 }
@@ -247,21 +157,10 @@ function RadioDot({ active }: { active: boolean }) {
 function Toggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
     <button
-      onClick={onClick}
-      role="switch"
-      aria-checked={on}
-      style={{
-        width: 42, height: 24, borderRadius: 999, border: "none", cursor: "pointer",
-        background: on ? "#0032be" : "#cbced4", position: "relative", transition: "background 0.15s", flexShrink: 0,
-      }}
+      onClick={onClick} role="switch" aria-checked={on}
+      style={{ width: 40, height: 20, borderRadius: 999, border: "none", cursor: "pointer", background: on ? BLUE : "#cbced4", position: "relative", transition: "background 0.15s", flexShrink: 0 }}
     >
-      <span
-        style={{
-          position: "absolute", top: 3, left: on ? 21 : 3,
-          width: 18, height: 18, borderRadius: "50%", background: "#fff",
-          transition: "left 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.25)",
-        }}
-      />
+      <span style={{ position: "absolute", top: 2, left: on ? 22 : 2, width: 16, height: 16, borderRadius: "50%", background: "#fff", transition: "left 0.15s", boxShadow: "0 1px 2px rgba(0,0,0,0.25)" }} />
     </button>
   );
 }
