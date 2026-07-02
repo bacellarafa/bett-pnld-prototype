@@ -28,6 +28,8 @@ const ANSWERS = [
 
 export function Screen4Result({ onGoTo, formData }: Props) {
   const { comp, ano, perfil } = formData;
+  const [title, setTitle] = useState(`Atividade Inclusiva de ${comp}`);
+  const [titleEditing, setTitleEditing] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
   const [alertOpen, setAlertOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
@@ -70,18 +72,26 @@ export function Screen4Result({ onGoTo, formData }: Props) {
             {/* ── Header card (título + chips + adaptação) ── */}
             <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: 24, display: "flex", flexDirection: "column", gap: 12 }}>
               {/* Título + lápis */}
-              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <span style={{ fontSize: 24, fontWeight: 600, color: "#000" }}>Atividade Inclusiva de {comp}</span>
-                <span style={{ width: 36, height: 36, borderRadius: 14, border: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", background: "#fff" }} title="Renomear">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
-                </span>
+              <div style={{ display: "flex", gap: 12, alignItems: "center", minWidth: 0 }}>
+                {titleEditing ? (
+                  <input value={title} autoFocus onChange={(e) => setTitle(e.target.value)} onBlur={() => setTitleEditing(false)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === "Escape") setTitleEditing(false); }}
+                    style={{ fontSize: 24, fontWeight: 600, color: "#000", border: "1px solid #cbd5e1", borderRadius: 8, padding: "2px 10px", fontFamily: "Poppins, sans-serif", outline: "none", width: 560, maxWidth: "60vw" }} />
+                ) : (
+                  <>
+                    <span title={title} style={{ fontSize: 24, fontWeight: 600, color: "#000", maxWidth: 620, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title}</span>
+                    <button onClick={() => setTitleEditing(true)} title="Renomear" style={{ flexShrink: 0, width: 36, height: 36, borderRadius: 14, border: "1px solid #e2e8f0", display: "flex", alignItems: "center", justifyContent: "center", background: "#fff", cursor: "pointer" }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Chips */}
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 <Chip bg="#f5f5f5" color="#666">{comp}</Chip>
                 <Chip bg="#f5f5f5" color="#666">{ano} - Ensino Fundamental</Chip>
-                <Chip bg="#666" color="#f5f5f5">EF05MA01</Chip>
+                <Chip bg="#666" color="#f5f5f5" titleAttr="Matemática (5º ano): identificar e descrever regularidades em sequências numéricas recursivas.">EF05MA01</Chip>
                 <Chip bg="#00beac" color="#fff" weight={600}>Atividade inclusiva</Chip>
                 <span style={{ fontSize: 12, color: "#666" }}>5 questões</span>
                 <span style={{ fontSize: 12, color: "#666" }}>•</span>
@@ -193,9 +203,9 @@ const actionBtn: React.CSSProperties = {
   fontFamily: "Poppins, sans-serif",
 };
 
-function Chip({ children, bg, color, weight = 500 }: { children: React.ReactNode; bg: string; color: string; weight?: number }) {
+function Chip({ children, bg, color, weight = 500, titleAttr }: { children: React.ReactNode; bg: string; color: string; weight?: number; titleAttr?: string }) {
   return (
-    <span style={{ background: bg, color, padding: "4px 10px", borderRadius: 6, fontSize: 12, fontWeight: weight, whiteSpace: "nowrap" }}>
+    <span title={titleAttr} style={{ background: bg, color, padding: "4px 10px", borderRadius: 6, fontSize: 12, fontWeight: weight, whiteSpace: "nowrap", cursor: titleAttr ? "help" : "default" }}>
       {children}
     </span>
   );
