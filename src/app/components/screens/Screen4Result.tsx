@@ -105,12 +105,12 @@ export function Screen4Result({ onGoTo, formData }: Props) {
                     <span style={{ width: 30, height: 30, borderRadius: 8, background: "#00beac", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
                     </span>
-                    <span style={{ fontSize: 18, fontWeight: 600, color: "#0f172b" }}>Adaptação ativa</span>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: "#0f172b" }}>Adaptação ativa</span>
                   </div>
                   <svg width="12" height="8" viewBox="0 0 10 7" fill="none" style={{ transform: adaptOpen ? "rotate(0deg)" : "rotate(180deg)", transition: "transform 0.2s" }}><path d="M1 6L5 2L9 6" stroke="#00beac" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </div>
                 {adaptOpen && (
-                  <div style={{ padding: "0 26px 24px 72px", fontSize: 18, color: "#000", lineHeight: "30px" }}>
+                  <div style={{ padding: "0 26px 24px 72px", fontSize: 13, color: "#333", lineHeight: 1.7 }}>
                     <p style={{ margin: 0 }}>Atividade foi adaptada para atender ao seguinte perfil:</p>
                     <ul style={{ margin: 0, paddingLeft: 27 }}>
                       <li>{perfil || "Dificuldade com textos mais longos"}</li>
