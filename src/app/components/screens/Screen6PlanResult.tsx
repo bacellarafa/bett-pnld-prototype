@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sidebar } from "../Sidebar";
 import { ExportModal } from "../ExportModal";
 import { FeedbackControl } from "../FeedbackControl";
-import { showToast } from "../lib/toast";
+import { showToast } from "../../lib/toast";
 
 interface Props {
   onGoTo: (n: number) => void;
