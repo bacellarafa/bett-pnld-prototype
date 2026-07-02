@@ -133,8 +133,8 @@ export function Screen6PlanResult({ onGoTo, planData }: Props) {
                 </div>
                 {/* Toggle segmentado */}
                 <div style={{ display: "inline-flex", background: "#f0f0f0", borderRadius: 999, padding: 4, flexShrink: 0 }}>
-                  <button onClick={() => setActiveTab("geral")} style={segStyle(activeTab === "geral")}>Plano geral (Turma)</button>
-                  <button onClick={() => setActiveTab("adaptacao")} style={segStyle(activeTab === "adaptacao")}>Plano adaptado</button>
+                  <button onClick={() => setActiveTab("geral")} style={segStyle(activeTab === "geral", "geral")}>Plano geral (Turma)</button>
+                  <button onClick={() => setActiveTab("adaptacao")} style={segStyle(activeTab === "adaptacao", "adaptado")}>Plano adaptado</button>
                 </div>
               </div>
 
@@ -328,8 +328,16 @@ function EditBox({ id, title, suffix, meta, content, variant = "section", active
   );
 }
 
-function segStyle(active: boolean): React.CSSProperties {
-  return { padding: "7px 16px", borderRadius: 999, border: "none", cursor: "pointer", fontSize: 13, fontWeight: active ? 600 : 400, fontFamily: "Poppins, sans-serif", background: active ? TEAL : "transparent", color: active ? "#fff" : "#666", transition: "all 0.15s", whiteSpace: "nowrap" };
+function segStyle(active: boolean, kind: "geral" | "adaptado"): React.CSSProperties {
+  const activeBg = kind === "adaptado" ? TEAL : "#fff";
+  const activeColor = kind === "adaptado" ? "#fff" : "#0f172b";
+  return {
+    padding: "7px 16px", borderRadius: 999, border: "none", cursor: "pointer", fontSize: 13,
+    fontWeight: active ? 600 : 400, fontFamily: "Poppins, sans-serif",
+    background: active ? activeBg : "transparent", color: active ? activeColor : "#666",
+    boxShadow: active && kind === "geral" ? "0 1px 3px rgba(0,0,0,0.14)" : "none",
+    transition: "all 0.15s", whiteSpace: "nowrap",
+  };
 }
 
 function inlineBold(s: string, keyBase: number) {
