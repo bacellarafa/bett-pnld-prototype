@@ -71,7 +71,6 @@ export function Screen6PlanResult({ onGoTo, planData }: Props) {
   const { comp, ano, tema } = planData;
   const [activeTab, setActiveTab] = useState<"geral" | "adaptacao">("adaptacao");
   const [exportOpen, setExportOpen] = useState(false);
-  const [successOpen, setSuccessOpen] = useState(true);
   const [adaptOpen, setAdaptOpen] = useState(true);
   const [activeId, setActiveId] = useState<string | null>(null); // seção/momento em edição (só um por vez)
   const [title, setTitle] = useState(`Plano de Aula: ${tema || "O ciclo da água e sua importância"}`);
@@ -86,6 +85,11 @@ export function Screen6PlanResult({ onGoTo, planData }: Props) {
     return () => window.removeEventListener("beforeunload", h);
   }, [dirty]);
 
+  // Confirmação de geração como toast (não fixo na tela)
+  useEffect(() => {
+    showToast("Plano de Aula gerado com sucesso!", "Você ainda pode gerar 2 planos de aula hoje!");
+  }, []);
+
   // Item 4 — guardar navegação interna (sidebar / gerar novo)
   const guardedGoTo = (n: number) => {
     if (dirty && !window.confirm("Você tem uma edição não salva. Deseja sair sem salvar?")) return;
@@ -97,20 +101,6 @@ export function Screen6PlanResult({ onGoTo, planData }: Props) {
       <Sidebar activeNav={3} onGoTo={guardedGoTo} />
       <div style={{ position: "absolute", left: 291, right: 0, top: 0, bottom: 0, overflowY: "auto", background: "#fff" }}>
         <div style={{ position: "relative", padding: "40px 40px 60px", width: 1108, boxSizing: "border-box" }}>
-
-          {successOpen && (
-            <div style={{ position: "absolute", top: 24, right: 40, width: 500, zIndex: 5, display: "flex", gap: 12, alignItems: "center", background: "#f0fdf4", border: "1px solid #00c950", borderRadius: 12, padding: 16, boxShadow: "0 4px 6px rgba(13,7,18,0.16)" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00a63e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172b" }}>Plano de Aula gerado com sucesso!</div>
-                <div style={{ fontSize: 12, color: "#666", marginTop: 1 }}>Você ainda pode gerar <strong style={{ color: "#000" }}>2</strong> planos de aula hoje!</div>
-              </div>
-              <button onClick={() => setSuccessOpen(false)} aria-label="Fechar" style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", lineHeight: 0, padding: 0 }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-              </button>
-            </div>
-          )}
-
           <div style={{ display: "flex", flexDirection: "column", gap: 41, width: 1028 }}>
 
             {/* Header card */}

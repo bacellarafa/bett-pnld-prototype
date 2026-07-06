@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sidebar } from "../Sidebar";
 import { ExportModal } from "../ExportModal";
 import { FeedbackControl } from "../FeedbackControl";
+import { showToast } from "../../lib/toast";
 
 interface Props {
   onGoTo: (n: number) => void;
@@ -32,11 +33,14 @@ export function Screen4Result({ onGoTo, formData }: Props) {
   const [titleEditing, setTitleEditing] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
   const [alertOpen, setAlertOpen] = useState(true);
-  const [successOpen, setSuccessOpen] = useState(true);
   const [adaptOpen, setAdaptOpen] = useState(true);
   const [exportOpen, setExportOpen] = useState(false);
   const [exportEntry, setExportEntry] = useState<"action_bar" | "edit_alert">("action_bar");
   const [exportFormat, setExportFormat] = useState<"pdf" | "docx">("pdf");
+
+  useEffect(() => {
+    showToast("Atividade gerada com sucesso!", "Você ainda pode gerar 3 atividades hoje!");
+  }, []);
 
   const openExport = (entry: "action_bar" | "edit_alert", format: "pdf" | "docx" = "pdf") => {
     setExportEntry(entry); setExportFormat(format); setExportOpen(true);
@@ -47,25 +51,6 @@ export function Screen4Result({ onGoTo, formData }: Props) {
       <Sidebar activeNav={2} onGoTo={onGoTo} />
       <div style={{ position: "absolute", left: 291, right: 0, top: 0, bottom: 0, overflowY: "auto", background: "#fff" }}>
         <div style={{ position: "relative", padding: "40px 40px 60px", width: 1108, boxSizing: "border-box" }}>
-
-          {/* Toast de sucesso — canto superior direito */}
-          {successOpen && (
-            <div style={{
-              position: "absolute", top: 24, right: 40, width: 500, zIndex: 5,
-              display: "flex", gap: 12, alignItems: "center",
-              background: "#f0fdf4", border: "1px solid #00c950", borderRadius: 12, padding: 16,
-              boxShadow: "0 4px 6px rgba(13,7,18,0.16)",
-            }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00a63e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172b" }}>Atividade gerada com sucesso!</div>
-                <div style={{ fontSize: 12, color: "#666", marginTop: 1 }}>Você ainda pode gerar <strong style={{ color: "#000" }}>3</strong> atividades hoje!</div>
-              </div>
-              <button onClick={() => setSuccessOpen(false)} aria-label="Fechar" style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", lineHeight: 0, padding: 0 }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-              </button>
-            </div>
-          )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: 41, width: 1028 }}>
 
